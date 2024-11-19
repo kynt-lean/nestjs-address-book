@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "entryFile": "db-migrator",
+  "compilerOptions": {
+    "deleteOutDir": false,
+    "webpack": true,
+    "assets": [{ "include": "../assets/migrations/*", "outDir": "dist/assets" }]
+  }
+}
