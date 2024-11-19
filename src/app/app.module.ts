@@ -12,6 +12,7 @@ import { LoggerModule } from '../core/loggers';
 import { parsePostgresConnectionString } from '../utils/pg.util';
 import { config } from './app.config';
 import { AuditLoggingModule } from './audit-logging/audit-logging.module';
+import { LocationsModule } from './locations/locations.module';
 
 const loggingRedactPaths = [
   'req.headers.cookie',
@@ -69,6 +70,7 @@ const exceptionMappings: ExceptionMapping[] = [
     ExceptionHandlersModule.forRoot(exceptionMappings),
     AuditLoggingCoreModule.forRoot(),
     AuditLoggingModule,
+    LocationsModule,
   ],
 })
 export class AppModule {}
