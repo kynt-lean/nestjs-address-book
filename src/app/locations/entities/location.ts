@@ -1,4 +1,6 @@
-export class Location {
+import { BaseEntity } from 'typeorm';
+
+export class Location extends BaseEntity {
   id: string;
   building: string;
   name: string;
@@ -13,6 +15,6 @@ export class Location {
   deleter?: string;
   deletionTime?: Date;
 
-  children?: Location[];
   parent?: Location;
+  children?: Location[];
 }

@@ -5,7 +5,6 @@ export const LocationSchema = new EntitySchema<Location>({
   name: 'Location',
   target: Location,
   tableName: 'locations',
-  type: 'closure',
   columns: {
     id: { type: 'varchar', primary: true, length: 36, name: 'id' },
     building: { type: 'varchar', length: 256, name: 'building' },
@@ -38,12 +37,13 @@ export const LocationSchema = new EntitySchema<Location>({
     children: {
       type: 'one-to-many',
       target: 'Location',
-      cascade: true,
+      inverseSide: 'parent',
+      cascade: ['insert', 'update'],
     },
     parent: {
       type: 'many-to-one',
       target: 'Location',
-      inverseSide: 'children',
+      joinColumn: { name: 'parentId' },
     },
   },
 });

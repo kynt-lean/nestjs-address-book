@@ -84,10 +84,10 @@ export class AuthenticationGuard implements CanActivate {
   }
 
   private setCurrentUser(context: ExecutionContext) {
-    const userMapper = this.options?.userMapper;
-    if (userMapper) {
+    const currentUserMapper = this.options?.currentUserMapper;
+    if (currentUserMapper) {
       const user = getRequestUser(context);
-      const mappedUser = userMapper(user);
+      const mappedUser = currentUserMapper(user);
       this.currentUserService.setCurrentUser(mappedUser);
     }
   }

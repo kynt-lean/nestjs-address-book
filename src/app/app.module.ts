@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { BadRequestException, Module } from '@nestjs/common';
 import { context, trace } from '@opentelemetry/api';
 import { ClsModule } from 'nestjs-cls';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
@@ -9,9 +9,11 @@ import { DatabaseModule } from '../core/database';
 import { ExceptionHandlersModule } from '../core/exception-handlers/exception-handlers.module';
 import { ExceptionMapping } from '../core/exception-handlers/exception-mapping';
 import { LoggerModule } from '../core/loggers';
+import { TransformationAndValidationModule } from '../core/validation/transformation-and-validation.module';
 import { parsePostgresConnectionString } from '../utils/pg.util';
 import { config } from './app.config';
 import { AuditLoggingModule } from './audit-logging/audit-logging.module';
+import { ParentIdNotValidException } from './locations/exceptions/parent-id-not-valid.exception';
 import { LocationsModule } from './locations/locations.module';
 
 const loggingRedactPaths = [
@@ -25,8 +27,7 @@ const loggingRedactPaths = [
 ];
 
 const exceptionMappings: ExceptionMapping[] = [
-  // { exception: CustomException, httpException: CustomHttpException },
-  // Add more mappings as needed
+  { exception: ParentIdNotValidException, httpException: BadRequestException },
 ];
 
 @Module({
@@ -40,9 +41,9 @@ const exceptionMappings: ExceptionMapping[] = [
           log(object) {
             const span = trace.getSpan(context.active());
             if (!span) return { ...object };
-            const { spanId, traceId } = trace
-              .getSpan(context.active())
-              ?.spanContext();
+            const spanContext = span.spanContext();
+            if (!spanContext) return { ...object };
+            const { spanId, traceId } = spanContext;
             return { ...object, spanId, traceId };
           },
         },
@@ -62,12 +63,13 @@ const exceptionMappings: ExceptionMapping[] = [
     }),
     AuthenticationModule.forRoot({
       authenGuards: [],
-      userMapper: (user) => ({
+      currentUserMapper: () => ({
         userId: 'fake user id',
         appId: 'fake app id',
       }),
     }),
     ExceptionHandlersModule.forRoot(exceptionMappings),
+    TransformationAndValidationModule.forRoot(),
     AuditLoggingCoreModule.forRoot(),
     AuditLoggingModule,
     LocationsModule,

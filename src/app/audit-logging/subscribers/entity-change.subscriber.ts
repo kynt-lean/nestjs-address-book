@@ -154,6 +154,9 @@ export class EntityChangeSubscriber implements EntitySubscriberInterface {
     if (obj1 == null && obj2 == null) {
       return true;
     }
+    if (Buffer.isBuffer(obj1) && Buffer.isBuffer(obj2)) {
+      return this.getHash(obj1) === this.getHash(obj2);
+    }
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   }
 

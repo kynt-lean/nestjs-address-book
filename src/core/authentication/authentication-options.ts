@@ -6,7 +6,7 @@ export interface AuthenticationOptions {
   sequence?: boolean;
   authenGuards?: AuthenticationGuardWrapper[];
   authorGuards?: AuthenticationGuardWrapper[];
-  userMapper?: CurrentUserMapper;
+  currentUserMapper?: CurrentUserMapper;
 }
 
 export type AuthenticationGuardWrapper =
