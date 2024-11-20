@@ -6,7 +6,7 @@
   ```bash
   docker-compose -f dev/docker-compose.dev.yml up -d
   ```
-- **Database Migration**: Migrate the database using:
+- **Database Migrations**: Migrate the database using:
   ```bash
   npm run applymigrations
   ```
@@ -25,6 +25,11 @@
 ## Application Components
 
 - **Tracer with OpenTelemetry**: Integrates OpenTelemetry for distributed tracing.
+  - **Overview**: OpenTelemetry is used to collect and visualize trace data, which helps in monitoring and debugging the application.
+  - **Trace ID Request with Error**: The image below shows how a trace ID is generated and associated with a request that encounters an error.
+    ![Trace ID Request with Error](docs/img/get_trace_id_request_with_error.png)
+  - **Visualize Trace ID Info with Logs**: This image demonstrates how trace IDs are visualized alongside logs, providing a comprehensive view of the application's behavior.
+    ![Visualize Trace ID Info with Logs](docs/img/visualize_trace_id_info_with_logs.png)
 - **Logging with Pino**: Utilizes Pino for efficient logging.
 - **Configuration**: Supports merging process environment variables using `__` as a separator.
 - **TypeORM DataSources**: Simplified settings for data sources with enhanced configuration.
@@ -32,4 +37,4 @@
 - **Authentication**: Easily declare authentication chains in parallel or sequentially, with support for mapping the current user after successful authentication.
 - **Validation Pipes**: Supports data transformation and normalization, such as converting to boolean or Date types, while ensuring input data validation.
 - **Exception Handlers**: Standardizes error objects returned from HTTP responses.
-- **Audit-Logging Infrastructure**: Allows setting creator, creationTime, lastModifier, lastModificationTime, deleter, and deletionTime (for soft deletes), as well as tracking entity property changes.
+- **Audit-Logging Infrastructure**: Allows setting creator, creationTime, lastModifier, lastModificationTime, deleter, and deletionTime, as well as tracking entity property changes.

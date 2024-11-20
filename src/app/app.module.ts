@@ -1,4 +1,9 @@
-import { BadRequestException, Module } from '@nestjs/common';
+import {
+  BadRequestException,
+  MiddlewareConsumer,
+  Module,
+  RequestMethod,
+} from '@nestjs/common';
 import { context, trace } from '@opentelemetry/api';
 import { ClsModule } from 'nestjs-cls';
 import { LoggerModule as PinoLoggerModule } from 'nestjs-pino';
@@ -10,6 +15,7 @@ import { ExceptionHandlersModule } from '../core/exception-handlers/exception-ha
 import { ExceptionMapping } from '../core/exception-handlers/exception-mapping';
 import { LoggerModule } from '../core/loggers';
 import { TransformationAndValidationModule } from '../core/validation/transformation-and-validation.module';
+import { TraceIdMiddleware } from '../middleware/trace-id.middleware';
 import { parsePostgresConnectionString } from '../utils/pg.util';
 import { config } from './app.config';
 import { AuditLoggingModule } from './audit-logging/audit-logging.module';
@@ -75,4 +81,10 @@ const exceptionMappings: ExceptionMapping[] = [
     LocationsModule,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TraceIdMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
