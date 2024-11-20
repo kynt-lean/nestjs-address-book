@@ -44,7 +44,11 @@ export class EntityChangeSubscriber implements EntitySubscriberInterface {
   }
 
   public async afterUpdate(event: UpdateEvent<EntityWithConstructor>) {
-    if (event.entity && this.shouldProcessEvent(event.entity)) {
+    if (
+      event.databaseEntity &&
+      event.entity &&
+      this.shouldProcessEvent(event.entity)
+    ) {
       await this.createEntityChange(
         eChangeType.Updated,
         event.entity,
@@ -124,13 +128,25 @@ export class EntityChangeSubscriber implements EntitySubscriberInterface {
   ): EntityPropertyChange[] {
     const changes: EntityPropertyChange[] = [];
 
+    const auditProperties = new Set([
+      'creator',
+      'creationTime',
+      'lastModifier',
+      'lastModificationTime',
+      'deleter',
+      'deletionTime',
+    ]);
+
     const allKeys = new Set([
       ...(oldEntity ? Object.keys(oldEntity) : []),
       ...Object.keys(entity),
     ]);
 
     allKeys.forEach((propertyName) => {
-      if (this.shouldAuditProperty(entity, propertyName)) {
+      if (
+        !auditProperties.has(propertyName) &&
+        this.shouldAuditProperty(entity, propertyName)
+      ) {
         const oldValue = oldEntity?.[propertyName];
         const newValue = entity[propertyName];
 

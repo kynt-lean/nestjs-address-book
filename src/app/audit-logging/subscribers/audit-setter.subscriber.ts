@@ -4,23 +4,21 @@ import {
   DataSource,
   EntitySubscriberInterface,
   InsertEvent,
+  ObjectLiteral,
   SoftRemoveEvent,
   UpdateEvent,
 } from 'typeorm';
 import { EntityChangeActorDetector } from '../../../core/audit-logging/entity-change-actor-detector';
 
-type EntityWithAuditFields = {
-  creator?: string;
-  creationTime?: Date;
-  lastModifier?: string;
-  lastModificationTime?: Date;
-  deleter?: string;
+type EntityWithConstructor = ObjectLiteral & {
+  constructor: Function;
 };
 
 @Injectable()
 export class AuditSetterSubscriber implements EntitySubscriberInterface {
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     private readonly actorDetector: EntityChangeActorDetector,
   ) {
     dataSource.subscribers.push(this);
@@ -33,7 +31,7 @@ export class AuditSetterSubscriber implements EntitySubscriberInterface {
     );
   }
 
-  public beforeInsert(event: InsertEvent<EntityWithAuditFields>) {
+  public beforeInsert(event: InsertEvent<EntityWithConstructor>) {
     const { actorId } = this.actorDetector.detectActor();
     if (
       event.entity &&
@@ -44,7 +42,7 @@ export class AuditSetterSubscriber implements EntitySubscriberInterface {
     }
   }
 
-  public beforeUpdate(event: UpdateEvent<EntityWithAuditFields>) {
+  public beforeUpdate(event: UpdateEvent<EntityWithConstructor>) {
     const { actorId } = this.actorDetector.detectActor();
     if (
       event.entity &&
@@ -58,7 +56,7 @@ export class AuditSetterSubscriber implements EntitySubscriberInterface {
     }
   }
 
-  public beforeSoftRemove(event: SoftRemoveEvent<EntityWithAuditFields>) {
+  public beforeSoftRemove(event: SoftRemoveEvent<EntityWithConstructor>) {
     const { actorId } = this.actorDetector.detectActor();
     if (event.entity && this.hasAuditFields(event.entity, ['deleter'])) {
       event.entity.deleter = actorId;
