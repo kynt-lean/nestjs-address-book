@@ -1,7 +1,7 @@
 // This import must be before any other imports
 import otelSDK from './tracer';
 
-// This import must be after the otelSDK import
+// These imports must be after the otelSDK import
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';

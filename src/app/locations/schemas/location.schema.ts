@@ -1,4 +1,7 @@
 import { EntitySchema } from 'typeorm';
+import { CreationAuditSchemaColumns } from '../../domain/schemas/creation-audit-object.schema';
+import { DeletionAuditSchemaColumns } from '../../domain/schemas/deletion-audit-object.schema';
+import { ModificationAuditSchemaColumns } from '../../domain/schemas/modification-audit-object.schema';
 import { Location } from '../entities/location';
 
 export const LocationSchema = new EntitySchema<Location>({
@@ -12,26 +15,9 @@ export const LocationSchema = new EntitySchema<Location>({
     locationNumber: { type: 'varchar', length: 256, name: 'location_number' },
     level: { type: 'int', name: 'level' },
     area: { type: 'decimal', precision: 16, scale: 2, name: 'area' },
-    creator: { type: 'varchar', length: 256, name: 'creator', nullable: true },
-    creationTime: { type: 'timestamp', name: 'creation_time', nullable: true },
-    lastModifier: {
-      type: 'varchar',
-      length: 256,
-      name: 'last_modifier',
-      nullable: true,
-    },
-    lastModificationTime: {
-      type: 'timestamp',
-      name: 'last_modification_time',
-      nullable: true,
-    },
-    deleter: { type: 'varchar', length: 256, name: 'deleter', nullable: true },
-    deletionTime: {
-      deleteDate: true,
-      type: 'timestamp',
-      name: 'deletion_time',
-      nullable: true,
-    },
+    ...CreationAuditSchemaColumns,
+    ...ModificationAuditSchemaColumns,
+    ...DeletionAuditSchemaColumns,
   },
   relations: {
     children: {
@@ -43,6 +29,7 @@ export const LocationSchema = new EntitySchema<Location>({
     parent: {
       type: 'many-to-one',
       target: 'Location',
+      inverseSide: 'children',
       joinColumn: { name: 'parentId' },
     },
   },
