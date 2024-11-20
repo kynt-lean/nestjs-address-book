@@ -1,6 +1,6 @@
 import { BaseEntity } from 'typeorm';
 import { eActorType } from '../../../core/audit-logging/actor-type.enum';
-import { eChangeType } from '../enums/change-type.enum';
+import { eChangeType } from '../../../core/audit-logging/change-type.enum';
 import type { EntityPropertyChange } from './entity-property-change';
 
 export class EntityChange extends BaseEntity {

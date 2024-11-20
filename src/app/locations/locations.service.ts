@@ -96,14 +96,7 @@ export class LocationsService {
   }
 
   public async remove(id: string): Promise<void> {
-    const location = await this.repository.findOne({ where: { id } });
-
-    if (!location) {
-      throw new ResourceNotFoundException({
-        resource: `Location with ID ${id}`,
-      });
-    }
-
+    const location = await this.getOne(id);
     await this.repository.softRemove(location);
   }
 
@@ -118,6 +111,18 @@ export class LocationsService {
   }
 
   public async findOne(id: string): Promise<LocationDto> {
+    const location = await this.getOne(id);
+
+    const locationDto = plainToInstance(LocationDto, location, {
+      excludeExtraneousValues: true,
+    });
+
+    locationDto.parentId = location.parent?.id;
+
+    return locationDto;
+  }
+
+  public async getOne(id: string): Promise<Location> {
     const location = await this.repository.findOne({
       where: { id },
       relations: ['parent'],
@@ -129,13 +134,7 @@ export class LocationsService {
       });
     }
 
-    const locationDto = plainToInstance(LocationDto, location, {
-      excludeExtraneousValues: true,
-    });
-
-    locationDto.parentId = location.parent?.id;
-
-    return locationDto;
+    return location;
   }
 
   private async checkLocationNumberUnique(

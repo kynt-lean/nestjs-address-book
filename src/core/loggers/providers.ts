@@ -1,9 +1,9 @@
 import { Logger, Provider } from '@nestjs/common';
-import { prefixesForLoggers } from './decorator';
+import { prefixesForLoggers } from './constants';
 import { getLoggerToken } from './token';
 
 export const createLoggerProviders = (): Provider<Logger>[] =>
-  prefixesForLoggers.map(prefix => createLoggerProvider(prefix));
+  prefixesForLoggers.map((prefix) => createLoggerProvider(prefix));
 
 const createLoggerProvider = (prefix: string): Provider<Logger> => ({
   provide: getLoggerToken(prefix),

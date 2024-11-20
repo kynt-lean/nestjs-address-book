@@ -17,10 +17,10 @@ import {
   AUDITED_METADATA_KEY,
   DISABLE_AUDITING_METADATA_KEY,
 } from '../../../core/audit-logging/audit.metadatas';
+import { eChangeType } from '../../../core/audit-logging/change-type.enum';
 import { EntityChangeActorDetector } from '../../../core/audit-logging/entity-change-actor-detector';
 import { EntityChange } from '../entities/entity-change';
 import { EntityPropertyChange } from '../entities/entity-property-change';
-import { eChangeType } from '../enums/change-type.enum';
 
 type EntityWithConstructor = ObjectLiteral & {
   constructor: Function;
